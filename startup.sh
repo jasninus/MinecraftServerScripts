@@ -11,6 +11,9 @@ id -u $MINECRAFTUSER &>/dev/null || useradd -r -m $MINECRAFTUSER
 # Safely sync everything inside rootfs to /
 rsync -a --ignore-existing rootfs/ /
 
+# Install server if needed
+/opt/minecraft/scripts/install_server.sh
+
 # Fix ownership
 chown -R minecraft:minecraft /opt/minecraft
 
