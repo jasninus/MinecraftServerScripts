@@ -11,9 +11,10 @@ REGION="eu-west-2"
 PLAYERS=$(screen -S minecraft -p 0 -X stuff "list\n" 2>/dev/null | grep -oP 'There are \K\d+')
 PLAYERS=${PLAYERS:-0}
 
+echo "Checking if any players are online"
 if [ "$PLAYERS" -eq 0 ]; then
-    echo "No players online. Waiting 5 minutes..."
-    sleep 300
+    echo "No players online. Waiting 30 seconds..."
+    sleep 30
 
     # Re-check
     PLAYERS=$(screen -S minecraft -p 0 -X stuff "list\n" 2>/dev/null | grep -oP 'There are \K\d+')
