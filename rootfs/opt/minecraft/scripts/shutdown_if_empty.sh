@@ -19,20 +19,21 @@ while true; do
     echo "$(date): Players=$PLAYERS"
 
     if [ "$PLAYERS" -gt 0 ]; then
+		echo "Players present, removing timestamp file"
         rm -f $EMPTY_TIMESTAMP_FILE
     else
         if [ ! -f $EMPTY_TIMESTAMP_FILE ]; then
+			echo "No timestamp file found, creating one"
             date +%s > $EMPTY_TIMESTAMP_FILE
         else
             EMPTY_SINCE=$(cat $EMPTY_TIMESTAMP_FILE)
             NOW=$(date +%s)
             DIFF=$((NOW - EMPTY_SINCE))
+			REMAINING=$((EMPTY_SECONDS_BEFORE_SHUTDOWN - DIFF))
+			echo "Empty for $DIFF sec, shutting down in $REMAINING sec if still empty"
 
             if [ "$DIFF" -ge "$EMPTY_SECONDS_BEFORE_SHUTDOWN" ]; then
                 echo "Server empty. Backing up and shutting down..."
-
-                screen -S minecraft -p 0 -X stuff "save-all\n"
-                sleep 5
 
                 tar -czf $BACKUP $WORLD_DIR
                 aws s3 cp $BACKUP s3://$BUCKET/world-latest.tar.gz --region $REGION
