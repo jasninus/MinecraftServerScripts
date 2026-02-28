@@ -2,6 +2,11 @@
 set -e
 
 MINECRAFTUSER=minecraft
+MINECRAFTDIR=/opt/minecraft/server
+WORLD_DIR="$MINECRAFTDIR/world"
+BACKUP="$MINECRAFTDIR/world.tar.gz"
+BUCKET="jas-minecraft-server-backup"
+REGION="eu-west-2"
 
 echo "Starting Git-based system deployment..."
 
@@ -17,6 +22,21 @@ chmod +x /opt/minecraft/scripts/*.sh
 # Install dependencies
 sudo yum install -y python3 python3-pip 
 sudo pip3 install mcstatus
+
+# Download backup from S3 (if it exists)
+echo "$(date): Checking for world backup on S3..."
+aws s3 cp s3://$BUCKET/world-latest.tar.gz $BACKUP --region $REGION
+
+if [ -f $BACKUP ]; then
+    echo "$(date): Backup found, extracting world..."
+    # Remove existing world folder if it exists
+    rm -rf $WORLD_DIR
+    mkdir -p $WORLD_DIR
+    tar -xzf $BACKUP -C $MINECRAFTDIR
+    echo "$(date): World restored from backup."
+else
+    echo "$(date): No backup found, starting a fresh world."
+fi
 
 # Install server if needed
 bash /opt/minecraft/scripts/install_server.sh

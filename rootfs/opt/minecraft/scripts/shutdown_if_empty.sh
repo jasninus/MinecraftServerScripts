@@ -23,7 +23,7 @@ while true; do
         rm -f $EMPTY_TIMESTAMP_FILE
     else
         if [ ! -f $EMPTY_TIMESTAMP_FILE ]; then
-			echo "No timestamp file found, creating one"
+			echo "No players, creating timestamp file to start shutdown countdown"
             date +%s > $EMPTY_TIMESTAMP_FILE
         else
             EMPTY_SINCE=$(cat $EMPTY_TIMESTAMP_FILE)
