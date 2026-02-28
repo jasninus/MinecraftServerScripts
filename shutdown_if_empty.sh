@@ -33,7 +33,11 @@ if [ "$PLAYERS" -eq 0 ]; then
         aws s3 cp $BACKUP s3://$BUCKET/world-latest.tar.gz --region $REGION
 
         # Terminate instance
-        INSTANCE_ID=$(curl -s http://169.254.169.254/latest/meta-data/instance-id)
+        INSTANCE_ID=$(aws ec2 describe-instances \
+  --filters "Name=tag:ServerType,Values=minecraft-automatic-shutdown" \
+  --query "Reservations[].Instances[].InstanceId" \
+  --output text)
+		echo "Instance ID is: $INSTANCE_ID"
         aws ec2 terminate-instances --instance-ids $INSTANCE_ID --region $REGION
     fi
 fi
