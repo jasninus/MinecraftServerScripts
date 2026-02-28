@@ -44,7 +44,7 @@ while true; do
                   --filters "Name=tag:ServerType,Values=minecraft-automatic-shutdown" \
                   --query "Reservations[].Instances[].InstanceId" \
                   --output text)
-                #aws ec2 terminate-instances --instance-ids $INSTANCE_ID --region $REGION
+                aws ec2 terminate-instances --instance-ids $INSTANCE_ID --region $REGION
                 exit 0
             fi
         fi
