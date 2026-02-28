@@ -11,6 +11,9 @@ id -u $MINECRAFTUSER &>/dev/null || useradd -r -m $MINECRAFTUSER
 # Safely sync everything inside rootfs to /
 rsync -a --ignore-existing --chown=minecraft:minecraft rootfs/ /
 
+# Mark scripts as executable
+chmod +x /opt/minecraft/scripts/*.sh
+
 # Install server if needed
 bash /opt/minecraft/scripts/install_server.sh
 
