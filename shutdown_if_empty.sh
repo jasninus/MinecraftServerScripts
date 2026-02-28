@@ -6,6 +6,7 @@ BACKUP="$MINECRAFTDIR/world.tar.gz"
 BUCKET="jas-minecraft-server-backup"
 REGION="eu-west-2"
 EMPTY_TIMESTAMP_FILE="/tmp/minecraft-empty-timestamp"
+EMPTY_SECONDS_BEFORE_SHUTDOWN=120
 
 # Check for players
 PLAYERS=$(screen -S minecraft -p 0 -X stuff "list\n" 2>/dev/null | grep -oP 'There are \K\d+')
@@ -33,8 +34,8 @@ EMPTY_SINCE=$(cat $EMPTY_TIMESTAMP_FILE)
 NOW=$(date +%s)
 DIFF=$((NOW - EMPTY_SINCE))
 
-if [ "$DIFF" -ge 300 ]; then  # 5 minutes
-    echo "Server empty for 5 minutes. Backing up and shutting down..."
+if [ "$DIFF" -ge $EMPTY_SECONDS_BEFORE_SHUTDOWN ]; then
+    echo "Server empty for $EMPTY_SECONDS_BEFORE_SHUTDOWN seconds. Backing up and shutting down..."
 
     # Save world
     screen -S minecraft -p 0 -X stuff "save-all\n"
@@ -51,6 +52,6 @@ if [ "$DIFF" -ge 300 ]; then  # 5 minutes
     echo "Terminating instance $INSTANCE_ID"
     aws ec2 terminate-instances --instance-ids $INSTANCE_ID --region $REGION
 else
-    REMAIN=$((300 - DIFF))
+    REMAIN=$((EMPTY_SECONDS_BEFORE_SHUTDOWN - DIFF))
     echo "Server has been empty for $DIFF seconds, waiting $REMAIN more seconds."
 fi
