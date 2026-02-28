@@ -39,7 +39,7 @@ else
 fi
 
 # Install server if needed
-bash /opt/minecraft/scripts/install_server.sh
+#bash /opt/minecraft/scripts/install_server.sh
 
 # Fix ownership
 chown -R minecraft:minecraft /opt/minecraft
