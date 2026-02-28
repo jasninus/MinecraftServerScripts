@@ -16,7 +16,7 @@ while true; do
 	PLAYERS=$(mcstatus "$MC_SERVER_HOST:$MC_SERVER_PORT" query 2>/dev/null | grep -oP '^players: \K\d+')
 	PLAYERS=${PLAYERS:-0}  # fallback to 0 if empty
 
-    echo "$(date): Players=$PLAYERS"
+    echo "$(date): Player count=$PLAYERS"
 
     if [ "$PLAYERS" -gt 0 ]; then
 		echo "Players present, removing timestamp file"
@@ -37,6 +37,7 @@ while true; do
 
                 tar -czf $BACKUP $WORLD_DIR
                 aws s3 cp $BACKUP s3://$BUCKET/world-latest.tar.gz --region $REGION
+				echo "Backup complete"
 
                 INSTANCE_ID=$(aws ec2 describe-instances \
                   --filters "Name=tag:ServerType,Values=minecraft-automatic-shutdown" \
