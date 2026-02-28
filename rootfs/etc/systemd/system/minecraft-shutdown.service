@@ -1,0 +1,12 @@
+[Unit]
+Description=Continuous Minecraft shutdown checker
+
+[Service]
+Type=simple
+User=minecraft
+ExecStart=/opt/minecraft/scripts/shutdown_if_empty.sh
+Restart=always
+RestartSec=10
+
+[Install]
+WantedBy=multi-user.target

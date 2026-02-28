@@ -1,0 +1,16 @@
+[Unit]
+Description=Minecraft Server
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+User=minecraft
+WorkingDirectory=/opt/minecraft/server
+ExecStart=/opt/minecraft/scripts/start.sh
+ExecStop=/opt/minecraft/scripts/stop.sh
+Restart=on-failure
+RestartSec=10
+Type=simple
+
+[Install]
+WantedBy=multi-user.target

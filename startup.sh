@@ -1,36 +1,28 @@
 #!/bin/bash
+set -e
 
 MINECRAFTUSER=minecraft
-MINECRAFTDIR=/opt/minecraft/server
-SCRIPTS_DIR=/opt/minecraft/scripts
 
-# Copy scripts
-mkdir -p $SCRIPTS_DIR
-cp -r scripts/* $SCRIPTS_DIR/
-chmod +x $SCRIPTS_DIR/*.sh
-chown -R $MINECRAFTUSER:$MINECRAFTUSER $SCRIPTS_DIR
+echo "Starting Git-based system deployment..."
 
-# Copy start/stop scripts to server folder
-cp $SCRIPTS_DIR/start.sh $MINECRAFTDIR/start
-cp $SCRIPTS_DIR/stop.sh $MINECRAFTDIR/stop
-chmod +x $MINECRAFTDIR/start $MINECRAFTDIR/stop
-chown $MINECRAFTUSER:$MINECRAFTUSER $MINECRAFTDIR/start $MINECRAFTDIR/stop
+# Ensure user exists
+id -u $MINECRAFTUSER &>/dev/null || useradd -r -m $MINECRAFTUSER
 
-# Copy server files
-cp -r server_files/* $MINECRAFTDIR/
-chown -R $MINECRAFTUSER:$MINECRAFTUSER $MINECRAFTDIR
+# Safely sync everything inside rootfs to /
+rsync -a --ignore-existing rootfs/ /
 
-# Download server jar and eula
-cd $MINECRAFTDIR
-wget -q https://piston-data.mojang.com/v1/objects/64bb6d763bed0a9f1d632ec347938594144943ed/server.jar -O server.jar
-echo "eula=true" > eula.txt
-chown $MINECRAFTUSER:$MINECRAFTUSER server.jar eula.txt
+# Fix ownership
+chown -R minecraft:minecraft /opt/minecraft
 
-# Setup systemd services (Minecraft + shutdown)
-# [same as before, no change]
-
+# Reload systemd
 systemctl daemon-reload
+
+# Enable services
 systemctl enable minecraft.service
-systemctl start minecraft.service
 systemctl enable minecraft-shutdown.service
+
+# Start services
+systemctl start minecraft.service
 systemctl start minecraft-shutdown.service
+
+echo "Deployment complete."
