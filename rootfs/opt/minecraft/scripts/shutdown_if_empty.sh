@@ -13,7 +13,8 @@ MC_SERVER_PORT=25565  # the server port in server.properties
 echo "$(date): Starting continuous shutdown checker."
 
 while true; do
-	PLAYERS=$(mcstatus "$MC_SERVER_HOST:$MC_SERVER_PORT" query | grep -oP 'Players online: \K\d+')
+	PLAYERS=$(mcstatus "$MC_SERVER_HOST:$MC_SERVER_PORT" query 2>/dev/null | grep -oP '^players: \K\d+')
+	PLAYERS=${PLAYERS:-0}  # fallback to 0 if empty
 
     echo "$(date): Players=$PLAYERS"
 
