@@ -14,6 +14,10 @@ rsync -a --ignore-existing --chown=minecraft:minecraft rootfs/ /
 # Mark scripts as executable
 chmod +x /opt/minecraft/scripts/*.sh
 
+# Install dependencies
+sudo yum install -y python3 python3-pip 
+sudo pip3 install mcstatus
+
 # Install server if needed
 bash /opt/minecraft/scripts/install_server.sh
 

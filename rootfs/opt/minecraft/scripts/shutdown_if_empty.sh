@@ -7,20 +7,13 @@ BUCKET="jas-minecraft-server-backup"
 REGION="eu-west-2"
 EMPTY_SECONDS_BEFORE_SHUTDOWN=120
 EMPTY_TIMESTAMP_FILE="/tmp/minecraft-empty-timestamp"
+MC_SERVER_HOST=127.0.0.1
+MC_SERVER_PORT=25565  # the server port in server.properties
 
 echo "$(date): Starting continuous shutdown checker."
 
 while true; do
-    PLAYERS=$(screen -S minecraft -p 0 -X stuff "list\n" 2>/dev/null)
-    sleep 2
-    screen -S minecraft -X hardcopy /tmp/mc_list.txt 2>/dev/null
-
-    if [ ! -f /tmp/mc_list.txt ]; then
-        PLAYERS=0
-    else
-        PLAYERS=$(grep -oP 'There are \K\d+' /tmp/mc_list.txt)
-        PLAYERS=${PLAYERS:-0}
-    fi
+	PLAYERS=$(mcstatus "$MC_SERVER_HOST:$MC_SERVER_PORT" query | grep -oP 'Players online: \K\d+')
 
     echo "$(date): Players=$PLAYERS"
 
