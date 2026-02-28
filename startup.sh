@@ -9,10 +9,10 @@ echo "Starting Git-based system deployment..."
 id -u $MINECRAFTUSER &>/dev/null || useradd -r -m $MINECRAFTUSER
 
 # Safely sync everything inside rootfs to /
-rsync -a --ignore-existing rootfs/ /
+rsync -a --ignore-existing --chown=minecraft:minecraft rootfs/ /
 
 # Install server if needed
-/opt/minecraft/scripts/install_server.sh
+bash /opt/minecraft/scripts/install_server.sh
 
 # Fix ownership
 chown -R minecraft:minecraft /opt/minecraft
