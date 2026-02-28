@@ -30,9 +30,9 @@ aws s3 cp s3://$BUCKET/world-latest.tar.gz $BACKUP --region $REGION
 if [ -f $BACKUP ]; then
     echo "$(date): Backup found, extracting world..."
     # Remove existing world folder if it exists
-    rm -rf $WORLD_DIR
-    mkdir -p $WORLD_DIR
-    tar -xzf $BACKUP -C $MINECRAFTDIR
+	cd /opt/minecraft/server
+	rm -rf world
+	tar -xzf world.tar.gz
     echo "$(date): World restored from backup."
 else
     echo "$(date): No backup found, starting a fresh world."

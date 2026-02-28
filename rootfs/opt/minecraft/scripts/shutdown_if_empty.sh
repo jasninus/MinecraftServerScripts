@@ -36,7 +36,7 @@ while true; do
                 echo "Server empty. Backing up and shutting down..."
 
 				cd "$MINECRAFTDIR"
-                tar -czf $BACKUP $WORLD_DIR
+                tar -czf world.tar.gz world
                 aws s3 cp "$BACKUP" "s3://$BUCKET/world-latest.tar.gz" --region "$REGION"
 				echo "Backup complete"
 
