@@ -35,8 +35,9 @@ while true; do
             if [ "$DIFF" -ge "$EMPTY_SECONDS_BEFORE_SHUTDOWN" ]; then
                 echo "Server empty. Backing up and shutting down..."
 
+				cd "$MINECRAFTDIR"
                 tar -czf $BACKUP $WORLD_DIR
-                aws s3 cp $BACKUP s3://$BUCKET/world-latest.tar.gz --region $REGION
+                aws s3 cp "$BACKUP" "s3://$BUCKET/world-latest.tar.gz" --region "$REGION"
 				echo "Backup complete"
 
                 INSTANCE_ID=$(aws ec2 describe-instances \
